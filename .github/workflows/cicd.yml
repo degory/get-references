@@ -51,6 +51,9 @@ jobs:
         name: executable-dotnet
         path: .
 
+    - name: Set executable permission
+      run: chmod +x ./get-references
+
     - name: Run
       run: ./get-references
       
