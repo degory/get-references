@@ -1,0 +1,74 @@
+namespace Program is
+    use Std = System.Console;
+
+    // use Path = IO.Path;
+    
+    use Microsoft.Build.Execution;
+    use Microsoft.Build.Utilities;
+    use Microsoft.Build.Evaluation;
+    // use Microsoft.Build.Locator;
+
+    // This is a very simple ghul application: it simply writes some text to the console     
+    class Main is
+        entry() static is
+            @IL.entrypoint()
+
+            init_build_locator();
+
+            // let tools_path = ToolLocationHelper.get_path_to_build_tools_file("msbuild.exe", ToolLocationHelper.current_tools_version);
+
+            // Std.error.write_line("tools path: " + tools_path);
+
+            // let project_collection = new ProjectCollection();
+
+            // project_collection.add_toolset(new Toolset(ToolLocationHelper.current_tools_version, IO.Path.get_directory_name(tools_path), project_collection, ""));
+
+            // string toolsPath = ToolLocationHelper.GetPathToBuildToolsFile("msbuild.exe", ToolLocationHelper.CurrentToolsVersion);
+            // ProjectCollection projectCollection = new ProjectCollection();
+            // projectCollection.AddToolset(new Toolset(ToolLocationHelper.CurrentToolsVersion, Path.GetDirectoryName(toolsPath), projectCollection, string.Empty));
+            // Project project = projectCollection.LoadProject(@"C:\Code\MyProject.csproj");            
+
+            Std.error.write_line("Hello world");
+
+            build();
+
+            return;
+        si
+
+        init_build_locator() static is
+            Microsoft.Build.Locator.MSBuildLocator.register_defaults();
+        si
+        
+        build() static is
+            let bm = Microsoft.Build.Execution.BuildManager.default_build_manager;
+
+            Std.error.write_line("have BM");
+
+            let bp = new Microsoft.Build.Execution.BuildParameters();
+
+            Std.error.write_line("have BP");
+
+            bm.begin_build(bp);
+
+            Std.error.write_line("started build");
+
+            let project = new Project("get-references.ghulproj");
+
+            let pi = project.create_project_instance();
+
+            Std.error.write_line("have PI");
+
+            let brd = new Microsoft.Build.Execution.BuildRequestData(pi, ["TryGetReferenceAssemblies"]);
+
+            Std.error.write_line("have BRD");
+
+            let results = bm.build_request(brd).results_by_target;
+
+            Std.error.write_line("have results");
+
+            for result in results do
+                Std.error.write_line("have result: " + result.key + " value: " + result.value);
+            od            
+        si
+    si
+si
