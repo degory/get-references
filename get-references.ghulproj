@@ -21,7 +21,15 @@
       <GhulSources Include="src/**/*.ghul" />
     </ItemGroup>
 
-    <Exec Command="ghul --v3 @(GhulSources) -o $(IntermediateOutputPath)$(AssemblyName).dll --assembly /usr/share/dotnet/sdk/5.0.101/Microsoft.Build.dll --assembly /usr/share/dotnet/sdk/5.0.101/Microsoft.Build.Utilities.Core.dll --assembly $(NugetPackageRoot)microsoft.build.locator/1.3.2/lib/netcoreapp2.0/Microsoft.Build.Locator.dll" />
+    <ItemGroup>
+      <GhulAssemblies Include="$(MSBuildExtensionsPath)Microsoft.Build.dll" />
+      <GhulAssemblies Include="$(MSBuildExtensionsPath)Microsoft.Build.Utilities.Core.dll" />
+      <GhulAssemblies Include="$(NugetPackageRoot)microsoft.build.locator/1.3.2/lib/netcoreapp2.0/Microsoft.Build.Locator.dll" />
+    </ItemGroup>
+
+    <Message Importance="high" Text="version might be $(MSBuildExtensionsPath) or $(TargetPlatformVersion)" />
+ 
+    <Exec Command="ghul --v3 @(GhulSources) -o $(IntermediateOutputPath)$(AssemblyName).dll @(GhulAssemblies -> '--assembly %(fullpath)', '%20')" />
 
     <Copy SourceFiles="$(ProjectDir)$(IntermediateOutputPath)$(AssemblyName).dll" DestinationFolder="$(ProjectDir)$(IntermediateOutputPath)ref" />   
   </Target>
